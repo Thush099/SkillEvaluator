@@ -17,6 +17,28 @@ Agent skills are folders of instructions and supporting files defined by the
 [Agent Skills specification](https://agentskills.io/). SkillEvaluator is part of
 the [NVIDIA Verified Skills pipeline](https://github.com/NVIDIA/skills).
 
+---
+
+### ⚡ Quick Interactive Benchmark & Evaluation Playground
+
+Run a self-contained multi-tier skill verification suite with zero external dependencies:
+
+```bash
+python scripts/quickstart_eval.py --output-md eval_report.md
+```
+
+#### Evaluation Architecture
+
+```mermaid
+flowchart LR
+    A["Skill Spec (SKILL.md)"] --> B["Tier 1: Static Quality Gate"]
+    B --> C["Tier 2: Semantic Intent & Boundary Checks"]
+    C --> D["Tier 3: Synthetic Agent Trajectory"]
+    D --> E["Scorecard & Safety Reporting"]
+```
+
+---
+
 ## Get started
 
 Three ways in, one CLI, same results.

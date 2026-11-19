@@ -27,6 +27,9 @@ Run a self-contained multi-tier skill verification suite with zero external depe
 python scripts/quickstart_eval.py --output-md eval_report.md
 ```
 
+Pass `--skill path/to/SKILL.md` to evaluate a specific skill. An explicitly
+provided path must exist; report output directories are created automatically.
+
 #### Evaluation Architecture
 
 ```mermaid

@@ -211,7 +211,7 @@ def format_markdown_scorecard(report: EvaluationReport) -> str:
 
 def main():
     parser = argparse.ArgumentParser(description="Evaluate AI agent skills with multi-tier benchmarks.")
-    parser.add_argument("--skill", type=str, default="examples/starter/SKILL.md", help="Path to SKILL.md")
+    parser.add_argument("--skill", type=str, help="Path to SKILL.md")
     parser.add_argument("--output-json", type=str, default="eval_report.json", help="Path for JSON output")
     parser.add_argument("--output-md", type=str, default="eval_report.md", help="Path for Markdown output")
     args = parser.parse_args()
@@ -256,8 +256,11 @@ def main():
         ),
     ]
 
-    skill_path = Path(args.skill)
-    if skill_path.exists():
+    skill_path = Path(args.skill) if args.skill else Path("examples/starter/SKILL.md")
+    if args.skill and not skill_path.is_file():
+        parser.error(f"Skill file does not exist: {skill_path}")
+
+    if skill_path.is_file():
         parsed = SkillParser.parse_markdown(skill_path)
         name = parsed["metadata"].get("name", "custom-skill")
         desc = parsed["metadata"].get("description", "Agent skill")
@@ -274,8 +277,12 @@ def main():
 
     # Save reports
     md_content = format_markdown_scorecard(report)
-    Path(args.output_md).write_text(md_content, encoding="utf-8")
-    Path(args.output_json).write_text(json.dumps(asdict(report), indent=2), encoding="utf-8")
+    output_md = Path(args.output_md)
+    output_json = Path(args.output_json)
+    output_md.parent.mkdir(parents=True, exist_ok=True)
+    output_json.parent.mkdir(parents=True, exist_ok=True)
+    output_md.write_text(md_content, encoding="utf-8")
+    output_json.write_text(json.dumps(asdict(report), indent=2), encoding="utf-8")
 
     print("\n" + "=" * 60)
     print(f" EVALUATION COMPLETE: {report.passed_scenarios}/{report.total_scenarios} Passed ({report.accuracy_pct}%)")

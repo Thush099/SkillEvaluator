@@ -18,6 +18,25 @@
     --mono: "SF Mono", "Cascadia Code", Menlo, Consolas, monospace;
     --sans: "Avenir Next", "Segoe UI", system-ui, sans-serif;
   }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #161a1f;
+      --card: #1e242b;
+      --ink: #e6ebf1;
+      --ink-soft: #94a0ac;
+      --rule: #323b45;
+      --pass: #5fb98f;
+      --fail: #d97b6e;
+      --info: #6aa5dc;
+      --accent: #6c93bd;
+    }
+    textarea, input[type="text"], input[type="number"], select { background: #222931; }
+    .error { background: #3a2622; }
+    .scenario { background: #222931; }
+    .grid-table th { background: #232a32; }
+    button.primary:hover { background: #2c5a85; }
+  }
+
   * { box-sizing: border-box; }
   body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.55 var(--sans); }
   header { padding: 30px 26px 20px; background: var(--accent); color: #eaf1f8; }
@@ -44,6 +63,18 @@
   button.ghost { background: transparent; color: var(--info); border: 1px solid var(--info); }
   button.small { flex: none; padding: 8px 12px; font-size: 12.5px; }
   button:disabled { opacity: .55; cursor: wait; }
+  .spinner {
+    display: inline-block; width: 1em; height: 1em; margin-left: 8px;
+    border: 2px solid var(--rule); border-top-color: var(--accent);
+    border-radius: 50%; vertical-align: -0.15em;
+    animation: spin 0.8s linear infinite;
+  }
+  .spinner[hidden] { display: none; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  @media (prefers-reduced-motion: reduce) {
+    .spinner { animation: none; }
+  }
+
   .error { margin-top: 12px; padding: 10px 12px; border-left: 3px solid var(--fail); background: #f6e2df; color: var(--fail); font-size: 13px; white-space: pre-wrap; }
 
   .scenario { border: 1px solid var(--rule); border-radius: 4px; padding: 11px 12px; margin-bottom: 10px; background: #fbfcfd; }
@@ -107,6 +138,7 @@
     <div class="btnrow">
       <button type="button" class="ghost small" id="add-scenario">+ Add scenario</button>
       <button type="submit" class="primary" id="run">Run benchmark</button>
+      <span class="spinner" hidden aria-hidden="true"></span>
     </div>
     <div class="error" id="error" role="alert" hidden></div>
   </form>
@@ -221,6 +253,9 @@
     e.preventDefault();
     const btn = $("run");
     btn.disabled = true; btn.textContent = "Running…";
+    btn.form.setAttribute("aria-busy", "true");
+    const spinner = document.querySelector(".spinner");
+    spinner.hidden = false;
     $("error").hidden = true;
     try {
       const res = await fetch("/api/benchmark", {
@@ -244,6 +279,8 @@
       $("error").hidden = false;
     } finally {
       btn.disabled = false; btn.textContent = "Run benchmark";
+      btn.form.setAttribute("aria-busy", "false");
+      spinner.hidden = true;
     }
   });
 

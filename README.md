@@ -278,3 +278,16 @@ Apache License 2.0 — see [LICENSE](LICENSE), [NOTICE](NOTICE), and
 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
 
 Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+
+## Web UI
+
+A local scorecard drives the real quickstart benchmark in the browser:
+
+```bash
+python ui/server.py            # http://127.0.0.1:8131
+```
+
+Define a skill (name, description, instructions) and a set of test prompts, then run the
+trigger benchmark across positive / negative / adversarial / boundary scenarios and read
+accuracy, precision, recall, F1, safety, and per-scenario pass/fail. The server uses only
+the standard library and calls `SimulatedSkillEvaluator.run_benchmark()`.
